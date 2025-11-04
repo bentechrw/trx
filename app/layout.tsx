@@ -8,7 +8,7 @@ const teachersMono = Teachers({
 });
 
 export const metadata: Metadata = {
-  title: "Bentech Transactions",
+  title: "Bentrx - Transaction Tracker",
   description: "A simple app to track your transactions built with Next.js and Supabase.",
 };
 
@@ -19,9 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${teachersMono.variable} antialiased`}
-      >
+      <body className={`${teachersMono.variable} antialiased`}>
         {children}
       </body>
     </html>
