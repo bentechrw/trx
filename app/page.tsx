@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { ArrowRight, Shield, Zap, TrendingUp, CreditCard, Smartphone, Globe, Menu, X, Play } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
+  const route = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -71,8 +73,10 @@ export default function LandingPage() {
               <a href="#features" className="text-slate-300 hover:text-white transition-colors">Features</a>
               <a href="#pricing" className="text-slate-300 hover:text-white transition-colors">Pricing</a>
               <a href="#about" className="text-slate-300 hover:text-white transition-colors">About</a>
-              <button className="text-slate-300 hover:text-white transition-colors">Log In</button>
-              <button className="bg-sky-900 px-6 py-2.5 rounded-xl font-medium hover:scale-105 transition-transform">
+              <button className="text-slate-300 hover:text-white transition-colors">
+                <Link href="/login">Log In </Link>
+              </button>
+              <button className="bg-sky-900 px-6 py-2.5 rounded-xl font-medium hover:scale-105 transition-transform cursor-pointer" onClick={() => route.push('/login')}>
                 Get Started
               </button>
             </div>
