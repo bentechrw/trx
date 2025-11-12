@@ -4,12 +4,19 @@ export default function Header ({sidebarOpen, setSidebarOpen}: {sidebarOpen: boo
 
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: '2-digit'
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: '2-digit'
     };
     const formattedDate = today.toLocaleDateString('en-US', options);
+
+    const getGreetings = () => {
+      const hour = today.getHours();
+      if (hour < 12) return "Good Morning";
+      if (hour < 18) return "Good Afternoon";
+      return "Good Evening";
+    }
 
     return (
         <header className="bg-slate-900/50 backdrop-blur-xl border-b border-slate-800 sticky top-0 z-30">
@@ -22,7 +29,7 @@ export default function Header ({sidebarOpen, setSidebarOpen}: {sidebarOpen: boo
                 {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
               <div>
-                <h1 className="text-2xl font-bold">Good Evening, Ben</h1>
+                <h1 className="text-2xl font-bold">{getGreetings()}, Ben</h1>
                 <p className="text-slate-400 text-sm">{formattedDate}</p>
               </div>
             </div>

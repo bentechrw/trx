@@ -52,7 +52,7 @@ export default function LandingPage() {
 
   const stats = [
     { value: '100+', label: 'Active Users' },
-    { value: '$50+', label: 'Processed' },
+    { value: '$5000+', label: 'Processed' },
     { value: '18+', label: 'Countries' },
     { value: '2.7★', label: 'App Rating' }
   ];
@@ -113,8 +113,8 @@ export default function LandingPage() {
                 <span className="text-blue-400">✨ To be trusted by 100+ users worldwide</span>
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-                Your Money,
+              <h1 className="text-5xl md:text-5xl font-bold leading-tight">
+                Your Business Money,
                 <span className="bg-blue-400 bg-clip-text text-transparent"> Simplified</span>
               </h1>
               
@@ -258,7 +258,7 @@ export default function LandingPage() {
                 </div>
                 <span className="font-bold">Bentrx</span>
               </div>
-              <p className="text-slate-400 text-sm">Making money management simple and secure for everyone.</p>
+              <p className="text-slate-400 text-sm">Making business management simple and secure for everyone.</p>
             </div>
             <div>
               <h4 className="font-semibold mb-3">Product</h4>

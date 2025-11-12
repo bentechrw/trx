@@ -8,8 +8,8 @@ const teachersMono = Teachers({
 });
 
 export const metadata: Metadata = {
-  title: "Bentrx - Transaction Tracker",
-  description: "A simple app to track your transactions built with Next.js and Supabase.",
+  title: "Bentrx - Business Transaction Tracker",
+  description: "A simple app to track your business transactions built with Next.js and Supabase.",
 };
 
 export default function RootLayout({
