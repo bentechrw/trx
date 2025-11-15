@@ -1,16 +1,21 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowUpRight, ArrowDownLeft, CreditCard, TrendingUp, Plus, MoreVertical, Eye, EyeOff, Zap, DollarSign, Clock, ArrowUpDown, CheckCircle, ChevronDown, Users, Calendar, X, Store } from 'lucide-react';
 import Aside from '@/components/aside';
 import Header from '@/components/Header';
+import { useRouter } from 'next/navigation';
+import { USER_STORAGE_KEY } from '@/utils/mock-user';
 
 export default function DashboardComp() {
+    const route = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [balanceVisible, setBalanceVisible] = useState(false);
     const [filterType, setFilterType] = useState('all');
     const [transactionType, setTransactionType] = useState('income');
+    const [currentUser, setCurrentUser] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
 
     const productLists = [
         {id: 1, name: 'Product A', unitPrice: 50.00, inStock: 20},
@@ -19,10 +24,18 @@ export default function DashboardComp() {
         {id: 4, name: 'Product D', unitPrice: 150.00, inStock: 5},
         {id: 5, name: 'Product E', unitPrice: 200.00, inStock: 8}
     ];
-    
-    const expenseCategories = ['Inventory', 'Overhead', 'Marketing', 'Services', 'Utilities', 'Salaries', 'Other Expense'];
-    const paymentMethods = ['Bank Transfer', 'Credit Card', 'Debit Card', 'Cash', 'Check', 'PayPal'];
-    const incomeCategories = ['Sales', 'Services', 'Recurring', 'Refund', 'Other Income'];
+
+    useEffect(() =>{
+        if(typeof window !== 'undefined') {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const storedUser = localStorage.getItem('mockUserCredentials');
+            if (storedUser) {
+                setCurrentUser(JSON.parse(storedUser));
+            }
+            setLoading(false);
+        };
+
+    }, [])
     
     const [formData, setFormData] = useState({
         type: 'income',
@@ -36,6 +49,15 @@ export default function DashboardComp() {
         notes: '',
         hasProducts: false
     });
+
+    if (loading) {
+        // Show a loading spinner or an empty div during client-side check
+        return <p>Loading application...</p>;
+    }
+    const expenseCategories = ['Inventory', 'Overhead', 'Marketing', 'Services', 'Utilities', 'Salaries', 'Other Expense'];
+    const paymentMethods = ['Bank Transfer', 'Credit Card', 'Debit Card', 'Cash', 'Check', 'PayPal'];
+    const incomeCategories = ['Sales', 'Services', 'Recurring', 'Refund', 'Other Income'];
+    
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -177,7 +199,7 @@ export default function DashboardComp() {
 
                     <div>
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xl font-bold">Recent Transactions</h3>
+                        <h3 className="text-xl font-bold">Recent Transactions {currentUser.email}</h3>
                         <div className="flex items-center gap-2">
                         <div className="flex bg-slate-800/50 rounded-xl p-1 border border-slate-700">
                             <button

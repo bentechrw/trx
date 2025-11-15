@@ -3,8 +3,15 @@ import { useState } from 'react';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Shield, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { loginSchema } from '../zodValidator';
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { mockUsers, USER_STORAGE_KEY } from '@/utils/mock-user';
+import { toast, ToastContainer } from 'react-toastify';
+import { getErrorMessage } from '@/utils/errorHandler';
 
-
+type loginForm = z.infer<typeof loginSchema>;
 
 export default function LoginComponent() {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,28 +23,31 @@ export default function LoginComponent() {
     confirmPassword: ''
   });
 
-
-  const junkUsers = [
-    { names: 'Ben admin', email: 'admin@bentechrw.com', password: 'Admin@123', role: 'Administrator', company: 'Bentech'},
-    { names: 'Alice CEO', email: 'ceo@bakery.com', password: 'Owner@123', role: 'Owner', company: 'Bakery Ltd'},
-    { names: 'Mark manager', email: 'manager@bakery.com', password: 'Manager@123', role: 'Manager', company: 'Bakery Ltd'},
-    { names: 'Sophie staff', email: 'staff@bakery.com', password: 'Staff@123', role: 'Staff', company: 'Bakery Ltd'},
-    { names: 'Jhon Auditor', email: 'auditor@bakery.com', password: 'Auditor@123', role: 'Auditor', company: 'Bakery Ltd'},
-    { names: 'Claude CEO', email: 'ceo@saleshop.com', password: 'Owner@123', role: 'Owner', company: 'Sales Shop'},
-    { names: 'Eunice manager', email: 'manager@saleshop.com', password: 'Manager@123', role: 'Manager', company: 'Sales Shop'},
-    { names: 'Eric staff', email: 'staff@saleshop.com', password: 'Staff@123', role: 'Staff', company: 'Sales Shop'},
-    { names: 'Peter Auditor', email: 'auditor@saleshop.com', password: 'Auditor@123', role: 'Auditor', company: 'Sales Shop'},
-  ]
+  const {register, handleSubmit, formState: { errors }} = useForm<loginForm>(
+    {
+        resolver: zodResolver(loginSchema)
+    }
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleInputChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-  };
+  const loginSubmit = handleSubmit(async (data) => {
+    console.log('Form submitted:', data);
+    const user = mockUsers.find((u) => u.email === data.email && u.password === data.password);
+    if (user) {
+        try {
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+            localStorage.setItem('IsLoggedIn', 'true');
+        } catch (error) {
+            toast.error(getErrorMessage(error));
+        }
+    } else {
+      toast.error('Invalid email or password.');
+    }
+  });
 
   const features = [
     'Bank-level 256-bit encryption',
@@ -69,6 +79,7 @@ export default function LoginComponent() {
         }
       `}</style>
         <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6 relative overflow-hidden">
+            <ToastContainer position='top-right'/>
             <div className="absolute inset-0 opacity-20">
                 <div className="absolute top-20 left-10 w-96 h-96 bg-blue-500 rounded-full filter blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
@@ -142,118 +153,157 @@ export default function LoginComponent() {
                         </button>
                     </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {!isLogin && (
-                    <div className='animate-[slideDown_0.3s_ease-out]'>
-                        <label className="block text-sm font-medium mb-2 text-slate-300">Full Name</label>
-                        <div className="relative">
-                        <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            placeholder="John Doe"
-                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                        />
-                        </div>
-                    </div>
-                    )}
+                <form onSubmit={loginSubmit} className="space-y-4">
 
-                    <div className='animate-[fadeIn_0.3s_ease-out]'>
-                        <label className="block text-sm font-medium mb-2 text-slate-300">Email Address</label>
-                        <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
-                            <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            placeholder="you@example.com"
-                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="animate-[fadeIn_0.3s_ease-out]">
-                        <label className="block text-sm font-medium mb-2 text-slate-300">Password</label>
-                        <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
-                            <input
-                            type={showPassword ? 'text' : 'password'}
-                            name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            placeholder="••••••••"
-                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-12 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                            />
-                            <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
-                            >
-                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </button>
-                        </div>
-                    </div>
-
-                    {!isLogin && (
-                    <div className='animate-[slideDown_0.3s_ease-out]'>
-                        <label className="block text-sm font-medium mb-2 text-slate-300">Confirm Password</label>
-                        <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
-                        <input
-                            type={showPassword ? 'text' : 'password'}
-                            name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleInputChange}
-                            placeholder="••••••••"
-                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                        />
-                        </div>
-                    </div>
-                    )}
 
                     {isLogin && (
-                        <div className="flex items-center justify-between text-sm">
-                            <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
-                            <input type="checkbox" className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-blue-500 focus:ring-offset-slate-900" />
-                            Remember me
-                            </label>
-                            <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors">
-                            Forgot password?
-                            </a>
-                        </div>
+                        <>
+                            <div className='animate-[fadeIn_0.3s_ease-out]'>
+                                <label className="block text-sm font-medium mb-2 text-slate-300">Email Address</label>
+                                <div className="relative">
+                                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                                    <input
+                                    type="email"
+                                    {...register('email')}
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    placeholder="you@example.com"
+                                    className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
+                                    />
+                                </div>
+                                {errors.email && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                                )}
+                            </div>
+
+                            <div className="animate-[fadeIn_0.3s_ease-out]">
+                                <label className="block text-sm font-medium mb-2 text-slate-300">Password</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        {...register('password')}
+                                        value={formData.password}
+                                        onChange={handleInputChange}
+                                        placeholder="••••••••"
+                                        className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-12 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                    
+                                </div>
+                                {errors.password && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                                )}
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                                <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+                                <input type="checkbox" className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-blue-500 focus:ring-offset-slate-900" />
+                                Remember me
+                                </label>
+                                <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors">
+                                Forgot password?
+                                </a>
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full bg-sky-900 py-3.5 rounded-xl font-semibold hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 group mt-6 cursor-pointer"
+                            >
+                                Log In
+                                <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                            </button>
+                        </>
                     )}
 
                     {!isLogin && (
-                        <div className="flex items-start gap-2 text-sm text-slate-300">
-                            <input type="checkbox" className="w-4 h-4 mt-0.5 rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-blue-500 focus:ring-offset-slate-900" required />
-                            <span>
-                                I agree to the{' '}
-                                <Link href="#" className="text-blue-400 hover:text-blue-300">Terms of Service</Link>
-                                {' '}and{' '}
-                                <Link href="#" className="text-blue-400 hover:text-blue-300">Privacy Policy</Link>
-                            </span>
-                        </div>
-                    )}
+                        <>
+                            <div className='animate-[slideDown_0.3s_ease-out]'>
+                                <label className="block text-sm font-medium mb-2 text-slate-300">Full Name</label>
+                                <div className="relative">
+                                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    placeholder="John Doe"
+                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                                />
+                                </div>
+                            </div>
+                            <div className='animate-[fadeIn_0.3s_ease-out]'>
+                                <label className="block text-sm font-medium mb-2 text-slate-300">Email Address</label>
+                                <div className="relative">
+                                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                                    <input
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    placeholder="you@example.com"
+                                    className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all`}
+                                    />
+                                </div>
+                        
+                            </div>
+                            <div className="animate-[fadeIn_0.3s_ease-out]">
+                                <label className="block text-sm font-medium mb-2 text-slate-300">Password</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={formData.password}
+                                        onChange={handleInputChange}
+                                        placeholder="••••••••"
+                                        className={`w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-12 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all`}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                    
+                                </div>
+                            </div>
+                            <div className='animate-[slideDown_0.3s_ease-out]'>
+                                <label className="block text-sm font-medium mb-2 text-slate-300">Confirm Password</label>
+                                <div className="relative">
+                                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleInputChange}
+                                    placeholder="••••••••"
+                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                                />
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full bg-sky-900 py-3.5 rounded-xl font-semibold hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 group mt-6 cursor-pointer"
+                            >
+                                Create Account
+                                <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                            </button>
+                        </>
 
-                    <button
-                        type="submit"
-                        className="w-full bg-sky-900 py-3.5 rounded-xl font-semibold hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 group mt-6 cursor-pointer"
-                    >
-                    {isLogin ? 'Log In' : 'Create Account'}
-                        <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
-                    </button>
+                    )}
                 </form>
 
                 <p className="text-center text-sm text-slate-400 mt-6">
                     {isLogin ? "Don't have an account? " : "Already have an account? "}
-                    <button
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
-                    >
-                    {isLogin ? 'Sign Up' : 'Log In'}
+                        <button
+                        onClick={() => setIsLogin(!isLogin)}
+                        className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                        >
+                        {isLogin ? 'Sign Up' : 'Log In'}
                     </button>
                 </p>
                 </div>
