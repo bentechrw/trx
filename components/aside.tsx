@@ -23,11 +23,11 @@ export default function Aside({sidebarOpen}: {sidebarOpen: boolean, setSidebarOp
       <div className="p-6 h-full flex flex-col">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-15 h-15 rounded-xl flex items-center justify-center font-bold text-xl">
-              <Image src="/logo.svg" alt="Bentech Logo" height={80} width={80} />
+            <Image src="/logo.svg" alt="Bentech Logo" height={80} width={80} />
           </div>
           <div>
-              <span className="text-xl font-bold block">Bentrx</span>
-              <span className="text-xs text-slate-400">Business Edition</span>
+            <span className="text-xl font-bold block">Bentrx</span>
+            <span className="text-xs text-slate-400">Business Edition</span>
           </div>
         </div>
 
@@ -35,7 +35,7 @@ export default function Aside({sidebarOpen}: {sidebarOpen: boolean, setSidebarOp
           {menuItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => route.push('/dashboard/' + item.link) }
+              onClick={() => { setActiveTab(item.id); route.push('/dashboard' + item.link); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                 activeTab === item.id
                   ? 'bg-sky-900 text-white'

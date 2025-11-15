@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import { Search, Filter, Download, ArrowUpRight, ArrowDownLeft, Eye, Trash2, Edit, FileText, Package, DollarSign, X, CheckCircle, Clock } from 'lucide-react';
+import Aside from '@/components/aside';
+import Header from '@/components/Header';
 
 export default function TransactionsComponent() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -193,15 +196,25 @@ export default function TransactionsComponent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 text-white p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 text-white">
+        <Aside sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+        {sidebarOpen && (
+            <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+            />
+        )}
+
+      <div className="lg:ml-64 p-6">
+
+        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+        <div className="mb-8 mt-6">
           <h1 className="text-4xl font-bold mb-2">Transactions</h1>
           <p className="text-slate-400">Track and manage all your business transactions</p>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-3">

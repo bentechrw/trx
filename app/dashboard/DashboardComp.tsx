@@ -119,11 +119,11 @@ export default function DashboardComp() {
             />
         )}
 
-        <div className="lg:ml-64">
+        <div className="lg:ml-64 p-6">
 
             <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-            <main className="p-6 space-y-6">
+            <main className="mt-6 space-y-6">
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {businessStats.map((stat, idx) => (
                     <div key={idx} className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/30 transition-all">
