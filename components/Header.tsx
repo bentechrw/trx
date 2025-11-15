@@ -1,6 +1,9 @@
 import { Bell, ChevronDown, Menu, Search, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Header ({sidebarOpen, setSidebarOpen}: {sidebarOpen: boolean, setSidebarOpen: (open: boolean) => void}) {
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = {
@@ -18,6 +21,23 @@ export default function Header ({sidebarOpen, setSidebarOpen}: {sidebarOpen: boo
       return "Good Evening";
     }
 
+    useEffect(() =>{
+      if(typeof window !== 'undefined') {
+        const storedUser = localStorage.getItem('mockUserCredentials');
+        if (storedUser) {
+          setCurrentUser(JSON.parse(storedUser));
+        }
+        setLoading(false);
+      };
+    }, [])
+
+    if (loading) {
+      // Show a loading spinner or an empty div during client-side check
+      return <p>Loading header...</p>;
+    }
+
+
+
     return (
       <header className="bg-slate-900/50 backdrop-blur-xl border-b border-slate-800 rounded-md sticky top-0 z-30">
         <div className="px-6 py-4 flex items-center justify-between">
@@ -29,7 +49,7 @@ export default function Header ({sidebarOpen, setSidebarOpen}: {sidebarOpen: boo
               {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <div>
-              <h1 className="text-2xl font-bold">{getGreetings()}, Ben</h1>
+              <h1 className="text-2xl font-bold">{getGreetings()}, {currentUser?.names}</h1>
               <p className="text-slate-400 text-sm">{formattedDate}</p>
             </div>
           </div>

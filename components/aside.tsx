@@ -7,6 +7,12 @@ import { useState } from "react";
 export default function Aside({sidebarOpen}: {sidebarOpen: boolean, setSidebarOpen: (open: boolean) => void}) {
   const route = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
+  const handleLogout = () => {
+    if(typeof window !== 'undefined') {
+      localStorage.removeItem('mockUserCredentials');
+      window.location.reload();
+    }
+  }
   const menuItems = [
       { label: 'Overview', icon: Home, id: 'overview', link: '/' },
       { label: 'Transactions', icon: ArrowUpRight, id: 'transactions', link: '/transactions' },
@@ -49,7 +55,7 @@ export default function Aside({sidebarOpen}: {sidebarOpen: boolean, setSidebarOp
         </nav>
 
         <div className="space-y-2">
-          <button className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-red-400 hover:text-red-300 hover:bg-slate-800/50 transition-all">
+          <button className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-red-400 hover:text-red-300 hover:bg-slate-800/50 transition-all" onClick={() => handleLogout()}>
             <LogOut size={20} />
             <span className="font-medium">Logout</span>
           </button>

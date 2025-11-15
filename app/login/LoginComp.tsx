@@ -40,7 +40,6 @@ export default function LoginComponent() {
     if (user) {
         try {
             localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
-            localStorage.setItem('IsLoggedIn', 'true');
         } catch (error) {
             toast.error(getErrorMessage(error));
         }
